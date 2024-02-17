@@ -1,0 +1,206 @@
+\documentclass[10pt]{article}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{hyperref}
+%\SweaveOpts[concordance=TRUE]
+\begin{document}
+
+
+\title{Module 1: Example of a \LaTeX document}
+\author{Roberto Bertolusso}
+\maketitle
+\tableofcontents
+
+% Note: Comments in latex start with a %
+
+% Sections and subsections in Latex
+\section{Introduction to Latex}
+\subsection{First concepts}
+STAT 605 groups will have to produce their final project report using \LaTeX.
+\LaTeX is more complex than RMarkdown and Quarto, but allows for a complete
+control of the output, and it is a must for graduate students.
+
+\subsubsection{Paragraphs}
+Similarly to RMarkdown, paragraphs are sentences that can be as long as necessary
+and that are going to be automatically wrapped when the end of the line is reached.
+
+To start a new paragraph, simply leave a blank line. Note that the first line of this
+paragraph has been indented. This behavior is by default, but can be changed.
+
+\subsection{Lists}
+To create unordered lists, we use the itemize environment
+\begin{itemize}
+\item This is the first item of the list
+\item This is another item on the list. It can also contain sub-lists
+  \begin{itemize}
+  \item First item of the sublist
+  \item Second item
+  \end{itemize}
+\item For an ordered list we use the enumerate environment. It can also be a
+      sub-item of another list, as we illustrate here.
+  \begin{enumerate}
+  \item First element of the ordered list
+  \item Next element
+  \end{enumerate}
+\end{itemize}
+
+\subsection{Tables}
+
+\LaTeX can create feature rich tables. A basic one is displayed below:
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|l|c|r|}
+  \hline
+  Title 1 & title 2 & title 3 \\
+  \hline
+  Row 1 Column 1  & Row 1 Column 2 & Row 1 Column 3 \\
+  Row 2 Column 1  & Row 2 Column 2 & Row 2 Column 3 \\
+  Row 3 Column 1  & Row 3 Column 2 & Row 3 Column 3 \\
+  \hline
+  \end{tabular}
+  \caption{Example of a Simple Table}\label{tab:simple-table}
+\end{table}
+
+\LaTeX allows to reference tables, figures, and so on. For example, we can refer
+here to table \ref{tab:simple-table}. As you see, the corresponding number has
+appear. All of this is managed by \LaTeX.
+
+For information on how to create advanced tables, please follow the following links:
+\begin{itemize}
+\item \href{https://latex-tutorial.com/tutorials/tables/}{\color{green}LaTeX Tutorial}
+\item \href{https://www.overleaf.com/learn/latex/Tables}{\color{green}Overleaf}
+\item \href{https://en.wikibooks.org/wiki/LaTeX/Tables}{\color{green}WikiBooks}
+\end{itemize}
+
+\subsection{Multicolumn}
+Multicolumns can be achieved using the minipage environment.
+\vskip 20pt
+
+\begin{minipage}{0.38\textwidth}
+  \begin{tabular}{|l|c|}
+  \hline
+  Title 1 & title 2  \\
+  \hline
+  Row 1 Column 1  & Row 1 Column 2  \\
+  Row 2 Column 1  & Row 2 Column 2  \\
+  Row 3 Column 1  & Row 3 Column 2  \\
+  \hline
+  \end{tabular}
+\end{minipage}
+\begin{minipage}{0.04\textwidth}
+~
+\end{minipage}
+\begin{minipage}{0.52\textwidth}
+\begin{itemize}
+\item This is the first item of the list
+\item This is another item on the list. It can also contain sub-lists
+  \begin{itemize}
+  \item First item of the sublist
+  \item Second item
+  \end{itemize}
+\item For an ordered list we use the enumerate environment. It can also be a
+      sub-item of another list, as we illustrate here.
+  \begin{enumerate}
+  \item First element of the ordered list
+  \item Next element
+  \end{enumerate}
+\end{itemize}
+\end{minipage}
+
+\section{Citations}
+Citations are done this way\cite{gillespie1977,wilkinson2006,kierzek2002}.
+As usual, \LaTeX takes care of the numbering automatically. The bibliography is
+located at the end of the document.
+
+
+\subsection{Mathematical expressions}
+RMarkdown borrows from \LaTeX to create mathematical expressions. As such, there is extensive
+support in \LaTeX. For example:
+
+\begin{gather}
+  a x^2 + b x + c = 0 \\
+  x^2 + 2\frac{b}{2a} x + \frac{c}{a} = 0 \\
+  x^2 + 2\frac{b}{2a} x + \frac{b^2}{4a^2} - \frac{b^2}{4a^2}+ \frac{c}{a} = 0\label{eq:sumsubs} \\
+  \left(x+\frac{b}{2a}\right)^2 = \frac{b^2}{4a^2}- \frac{c}{a} \\
+  \left(x+\frac{b}{2a}\right)^2 = \frac{b^2-4ac}{4a^2} \\
+  x_{1,2}+\frac{b}{2a} = \pm \frac{\sqrt{b^2-4ac}}{2a} \\
+  x_{1,2}= \frac{-b\pm\sqrt{b^2-4ac}}{2a}
+\end{gather}
+
+For more information about mathematics and \LaTeX, please visit the following links:
+
+\begin{itemize}
+\item \href{https://www.docx2latex.com/tutorials/mathematical-equations-latex/}{\color{green}Docx2LaTeX Tutorial}
+\item \href{https://www.overleaf.com/learn/latex/Mathematical_expressions}{\color{green}Overleaf}
+\item \href{https://en.wikibooks.org/wiki/LaTeX/Mathematics}{\color{green}WikiBooks}
+\end{itemize}
+
+\subsection{Running R code}
+
+To run R code we use a code block, as shown below. For now do not worry if you do not understand the code itself. We can type the code block ourselves, of click on the green C button with a plus on its upper-left corner, or use the shortcut <Ctrl-Alt-I> (Windows and Linux) or <Cmd-Option-I> (Mac).
+
+<<>>=
+7 + 3
+@
+
+
+We can specify options that change how the block is processed. For example, if we want to avoid that the R code is displayed, we can use the following option:
+
+<<echo=FALSE>>=
+a <- 5
+b <- 9
+@
+
+As you can see, the code has not been displayed, but it has run.
+
+\subsection{Mixing narrative with results from R code}
+
+We can incorporate results obtained from R in our narrative. For example, the last code block has defined two variables, $a$ and $b$. We are going to use them in this paragraph, stating that the result of adding $a$, that has a value of \Sexpr{a}, to $b$, that has a value of \Sexpr{b}, is \Sexpr{a + b}. Note that the results in the rendered document have been provided by R.
+
+\subsection{Complete list of options for knitr}
+For a complete list of options for the code blocks,
+\href{https://yihui.name/knitr/options/}{\color{green}please follow this link}
+
+
+
+\subitem{Including R generated plots}
+We can also include plots. 
+
+\begin{figure}[h]
+<<echo=FALSE,fig.width=8,fig.height=4>>=
+hist(rnorm(500))
+@
+\caption{Example of a Histogram}\label{fig:histog}
+\end{figure}
+
+We can reference the figures, such as Figure \ref{fig:histog}, and \LaTeX takes
+care of the numbering (note that this numbering is independent of the one assigned
+to tables).
+
+\subsection{Using xtable}
+The function xtable can be of use in generating formatted tables directly from
+the data:
+
+<<echo=FALSE, results='asis'>>=
+library(xtable)
+xtable(head(CO2),caption='CO2 table', label='tab:CO2')
+@
+
+Note that we can also reference table \ref{tab:CO2}, generated from xtable.
+
+
+\begin{thebibliography}{1}
+\bibitem{gillespie1977} Gillespie D: \textbf{Exact stochastic simulation of coupled chemical
+  reactions}. \emph{J. Phys. Chem.} 1977, \textbf{81}(25):2340--2361.
+
+\bibitem{wilkinson2006} Wilkinson D: \emph{Stochastic modelling for systems biology}. Mathematical and
+  Computational Biology Series, Chapman \& Hall/CRC 2006.
+
+\bibitem{kierzek2002} Kierzek AM: \textbf{STOCKS: STOChastic Kinetic Simulations of biochemical
+  systems with Gillespie algorithm}. \emph{Bioinformatics} 2002,
+  \textbf{18}(3):470--481.
+\end{thebibliography}
+
+
+\end{document}
