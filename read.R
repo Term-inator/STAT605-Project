@@ -1,20 +1,17 @@
 library(parallel)
 library(jsonlite)
+library(dplyr)
+library(purrr)
 
-numCores <- min(detectCores(), 7)
-cl <- makeCluster(numCores)
-
-
-files <- paste0("data/Video_Games/json_", 1:7, ".json.gz")
 
 logger <- function(message) {
   writeLines(message, file('debug.log', open = 'a'), useBytes = TRUE)
 }
 
-read_and_parse_json_gz <- function(file_path) {
+read_file <- function(file_path) {
   logger(sprintf("Start Processing File %s ...", basename(file_path)))
-  parsed_lines <- list()
   con <- gzfile(file_path, "r")
+  parsed_lines <- list()
   
   line_counter <- 0
   while(TRUE) {
@@ -31,18 +28,24 @@ read_and_parse_json_gz <- function(file_path) {
   }
   
   close(con)
+  
   logger(sprintf("Completed Processing File %s", basename(file_path)))
   
   return(parsed_lines)
 }
 
-clusterExport(cl, varlist = c("logger"), envir = environment())
-
-start_time <- Sys.time()
-results <- parLapply(cl, files, read_and_parse_json_gz)
-
-stopCluster(cl)
-end_time <- Sys.time()
-
-sprintf("Cost %s min", end_time - start_time)
+read_files <- function (files) {
+  num_cores <- min(c(detectCores(), length(files), 8))
+  cl <- makeCluster(num_cores)
+  clusterExport(cl, varlist = c("logger"), envir = environment())
+  
+  start_time <- Sys.time()
+  results <- parLapply(cl, files, read_file)
+  stopCluster(cl)
+  end_time <- Sys.time()
+  
+  sprintf("Cost %s min", end_time - start_time)
+  
+  return(flatten(results))
+}
 
