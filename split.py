@@ -36,6 +36,6 @@ def copy_json_lines_to_compressed_files(input_file, output_dir, lines_per_file):
 name = 'Video_Games'
 input_file = f'data/{name}.json.gz'
 output_dir = f'data/{name}/'
-lines_per_file = 400000
+lines_per_file = 320669
 
 copy_json_lines_to_compressed_files(input_file, output_dir, lines_per_file)
