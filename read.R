@@ -9,14 +9,13 @@ logger <- function(message) {
 }
 
 read_file <- function(file_path, to_data.frame = TRUE) {
-  """
-  Read data from one file
-  @param file_path
-  @param to_data.frame: covert the result(list) to data.frame
-  @example
-  meta_file <- 'data/meta_Video_Games.json.gz'
-  meta_data <- read_file(meta_file)
-  """
+  # Read data from one file
+  # @param file_path
+  # @param to_data.frame: covert the result(list) to data.frame
+  # @example
+  # meta_file <- "data/meta_Video_Games.json.gz"
+  # meta_data <- read_file(meta_file)
+  
   logger(sprintf("Start Processing File %s ..., to_data.frame: %s", basename(file_path), to_data.frame))
   con <- gzfile(file_path, "r")
   parsed_lines <- list()
@@ -50,15 +49,14 @@ read_file <- function(file_path, to_data.frame = TRUE) {
 }
 
 read_files <- function (files, to_data.frame = TRUE, merge = FALSE) {
-  """
-  Read data from multiple files in parellel
-  @param files: a vector of file path
-  @param to_data.frame: covert the result(list) to data.frame
-  @param merge: merge results from these files
-  @example
-  review_files <- paste0('data/Video_Games/json_', 1:8, '.json.gz')
-  review_data <- read_files(review_files)
-  """
+  # Read data from multiple files in parellel
+  # @param files: a vector of file path
+  # @param to_data.frame: covert the result(list) to data.frame
+  # @param merge: merge results from these files
+  # @example
+  # review_files <- paste0("data/Video_Games/json_", 1:8, ".json.gz")
+  # review_data <- read_files(review_files)
+
   num_cores <- min(c(detectCores(), length(files), 8))
   cl <- makeCluster(num_cores)
   clusterExport(cl, varlist = c("logger", "read_file"), envir = environment())
