@@ -54,3 +54,10 @@ renv/
 *.log
 renv.lock
 STAT605-Project.Rproj
+
+figure/
+
+*.tex
+*.aux
+*.gz
+*.toc
