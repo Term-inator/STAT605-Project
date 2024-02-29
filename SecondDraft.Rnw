@@ -1,0 +1,551 @@
+\documentclass[10pt]{article}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{Sweave}
+\begin{document}
+\title{Project Draft2: Air Quality Analysis}
+
+\author{Valerie Heckel, Lavanya Saxena, Jacqueline Cabrera, Theodore Gerasimov, Sicong Chen}
+\maketitle % this is for bringing the title, author and date  
+\tableofcontents
+
+<<echo=False>>=
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
+@
+
+\section{Description of the project}
+Description:
+This project aims to analyze daily ozone emissions in the states of the United States during the years 2016, 2017, and 2018. Additionally, it will evaluate air quality in these locations using the air quality index. The analysis will focus on three main variables: daily ozone emissions using arithmetic mean, maximum value, and minimum value.
+
+States included in the analysis:
+
+Alabama
+Alaska
+Arizona
+Arkansas
+California
+Colorado
+Connecticut
+Delaware
+District of Columbia
+Florida
+Georgia
+Hawaii
+Idaho
+Illinois
+Indiana
+Iowa
+Kansas
+Kentucky
+Louisiana
+Maine
+Maryland
+Massachusetts
+Michigan
+Minnesota
+Mississippi
+Missouri
+Montana
+Nebraska
+Nevada
+New Hampshire
+New Jersey
+New Mexico
+New York
+North Carolina
+North Dakota
+Ohio
+Oklahoma
+Oregon
+Pennsylvania
+Rhode Island
+South Carolina
+South Dakota
+Tennessee
+Virginia
+
+Variables to analyze:
+
+Daily ozone emissions using arithmetic mean.
+Daily ozone emissions using maximum value.
+Daily ozone emissions using minimum value.
+Air quality index.
+
+\subsection{Air quality} 
+
+The Air Quality Index (AQI) provides both color-coded indicators and numerical values to assess the quality of the air we breathe.
+
+AQI colors range from Green to Yellow to Orange to Red to Purple to Maroon, with each color representing progressively poorer air quality compared to the color before it.
+
+Green: Signifies the best air quality, indicating clean air that is safe to breathe.
+Yellow, Orange, and Red: Commonly observed during the summer months when air quality may be compromised.
+Purple and Maroon: Represent the worst air quality conditions, with Maroon being rarely observed due to ongoing efforts to improve air quality.
+
+The AQI provides a numerical scale ranging from 0 to 500. Lower AQI values, typically below 100, indicate clean air, whereas higher values suggest increasing levels of air pollution.
+
+Clean air: AQI values below 100
+Potential health risks: On days when the AQI exceeds 100, the air may be harmful to health, particularly for sensitive groups.
+The AQI serves as a useful tool for informing the public about the relative cleanliness of the air and potential health risks associated with air pollution.
+
+\subsection{Arithmetic mean of Ozone} 
+The arithmetic mean of ozone refers to the average concentration of ozone measured over a specific period, typically calculated by summing up all individual ozone measurements and dividing by the total number of measurements taken. This metric provides insight into the typical or average level of ozone pollution in a particular area, allowing for comparisons between different locations or over time. It is commonly used in air quality monitoring and assessment to understand ozone pollution trends and to inform air quality management decisions.
+
+In the upcoming graphs, our focus lies in examining the relationship between air quality and the arithmetic mean of ozone across the United States. We aim to compare latitudes and longitudes to uncover potential correlations among states. For instance, states like California, known for significant commercial activity, might exhibit higher ozone values. Through this analysis, we seek to gain insights into geographical variations and potential influences on air quality across the country.
+
+\section{Visualizing the Average Ozone Emissions Across the United States}
+
+<<echo=FALSE>>=
+library(maps)
+
+# Read the CSV file
+my_data <- read.csv("./data/airquality.csv")
+
+# Take a sample of 1000 points from your data
+sample_data <- my_data[sample(nrow(my_data), 1000), ]
+
+# Define colors for the markers
+colors <- colorRampPalette(c("blue", "yellow", "red"))(10)
+
+# Define the range of values in the "Arithmetic.Mean" column
+min_mean <- min(sample_data$Arithmetic.Mean)
+max_mean <- max(sample_data$Arithmetic.Mean)
+
+# Assign color index based on the values of "Arithmetic.Mean"
+rounded_mean <- round(sample_data$Arithmetic.Mean, 3)
+color_index <- cut(rounded_mean, breaks = 10, labels = FALSE)
+
+# Plot the map of the US
+map("state", col = "gray", fill = TRUE, lwd = 0.5, ylim = c(24, 50), xlim = c(-125, -66))
+
+# Plot points on the map with colors based on "Arithmetic.Mean"
+points(sample_data$Longitude, sample_data$Latitude, pch = 19, col = colors[color_index], cex = 0.5)
+
+# Round the numbers in the legend
+legend_values <- round(seq(min_mean, max_mean, length.out = 10), 2)
+
+# Create the legend plot
+par(mar = c(5, 0, 2, 0))  # Adjust margins for the legend plot
+plot.new()
+legend("center", legend = legend_values, 
+       fill = colors, title = "Arithmetic Mean (United States)", cex = 0.5, horiz = TRUE, inset = c(0, 0, -0.2, 0))
+
+@
+
+\section{Plots}
+
+\subsection{Comparative Histogram: Average Ozone Levels in the United States vs California}
+
+
+The histograms illustrate the distribution of ozone levels based on the arithmetic mean variable. The first histogram, shown in blue, represents data from the entire United States, while the second histogram, depicted in red, focuses solely on California.
+
+In the United States, ozone levels between 0.02 and 0.04 display a relatively high density, with approximately 30 occurrences. A similar distribution pattern is observed in the histogram for California, indicating a close resemblance in ozone level distribution between the state and the country as a whole.
+
+Both histograms exhibit tails within the range of values from 0.04 to 0.06, suggesting occasional higher ozone levels. This indicates a significant impact of California State on the overall ozone level distribution in the country. 
+
+<<echo=FALSE>>=
+
+my_data <- read.csv("./data/airquality.csv")
+
+par(mfrow = c(1, 2))
+par(mar = c(5, 5, 2, 2))
+
+hist(my_data$Arithmetic.Mean, freq = FALSE, 
+     main = "Ozone Arithmetic Mean United States", 
+     xlab = "Emission value",       
+     ylab = "Density",                
+     col = rgb(0, 0, 1, 0.5),                       
+     border = "white",                    
+     breaks = 15,  # Adjust the number of breaks for smaller bins
+     cex.main = 0.8)    
+
+subset_data <- my_data[my_data$State.Code == 6, ]
+
+if (nrow(subset_data) > 0) {
+  hist(subset_data$Arithmetic.Mean, freq = FALSE, 
+       main = "Ozone Arithmetic Mean California State", 
+       xlab = "Emission value",       
+       ylab = "Density",                
+       col = rgb(1, 0, 0, 0.5),                      
+       border = "white",                    
+       breaks = 15,  # Adjust the number of breaks for smaller bins
+       cex.main = 0.8)
+} else {
+  cat("No data available for State.code = 6")
+} 
+
+@
+\subsection{Box Plot Analysis: Arithmetic Mean and Air Quality Index}
+
+This two box plot represent the value of the Ozone Emission of the Country in comparison vs the Air Quality index. We aim to start to seeing visual correlation to the main two measurements that we have from the data. 
+
+
+<<echo=FALSE>>=
+par(mfrow = c(1, 2))  # Set up a 1x2 grid for plotting
+# Plot boxplot for the Arithmetic.Mean column
+boxplot(my_data$Arithmetic.Mean,
+        main = "Boxplot of Arithmetic Mean (United States)",
+        ylab = "Value")
+# Add label for the median of Arithmetic Mean
+text(1, median(my_data$Arithmetic.Mean), paste("Median:", round(median(my_data$Arithmetic.Mean), 2)), pos = 3, cex = 0.8)
+
+# Plot boxplot for the AQI column
+boxplot(my_data$AQI,
+        main = "Boxplot of AQI (United States)",
+        ylab = "Value")
+# Add label for the median of AQI
+text(1, median(my_data$AQI), paste("Median:", round(median(my_data$AQI), 2)), pos = 3, cex = 0.9)
+@
+
+\subsection{Scatter Plot Analysis: States with AQI Greater Than 50}
+Description:
+According to the EPA guidelines, an AQI index between 50-150 is considered safe (for healthy population). 
+0 to 50 = Good
+51 to 100 = Moderate
+101 to 150 = Unhealthy for sensitive groups
+151 to 200 = Unhealthy
+201 to 300 = Very unhealthy
+301+ = Hazardous
+In this analysis, we wanted to plot the AQI values for each state over the year 2018 (for states that had AQI exceeding 50) and observe trend across different states. The colored states (in the legend) had AQI exceeding 151 at some point in the year, which is considered unhealthy. From our analysis, the state of California had the highest AQI values across the year. Further, the highest AQI values were around the month of July. 
+
+
+<<echo=FALSE>>=
+my_data <- read.csv("./data/airquality.csv")
+df <- my_data
+df$Date.Local <- as.Date(df$Date.Local, format="%m/%d/%y")
+
+df_2018 <- df[format(df$Date.Local, "%Y") == "2018", ]
+df_2018_AQI_gt_50 <- df_2018[df_2018$AQI > 50, ]
+
+states <- unique(df_2018_AQI_gt_50$State.Name)
+df_2018_AQI_gt_180 <- df_2018_AQI_gt_50[df_2018_AQI_gt_50$AQI > 151, ]
+states_gt_180 <- unique(df_2018_AQI_gt_180$State.Name)
+
+colors_gt_180 <- rainbow(length(states_gt_180))
+colors_named_gt_180 <- setNames(colors_gt_180, states_gt_180)
+
+
+colors <- rainbow(length(states))
+# Plot base with type 'n' to set up the plot
+# Plot base with type 'n' to set up the plot
+plot(df_2018_AQI_gt_50$Date.Local, df_2018_AQI_gt_50$AQI, type = "n", xlab = "Date", ylab = "AQI",
+     main = "States with AQI over 50 in 2018", ylim = c(min(df_2018_AQI_gt_50$AQI), max(df_2018_AQI_gt_50$AQI)))
+
+# Loop through each state to add points; only add to legend if AQI > 180
+for (i in 1:length(states)) {
+  state_data <- df_2018_AQI_gt_50[df_2018_AQI_gt_50$State.Name == states[i], ]
+  if(states[i] %in% states_gt_180) {
+    points(state_data$Date.Local, state_data$AQI, col = colors_named_gt_180[states[i]], pch = 19, cex = 0.6)
+    # Optionally add lines
+  } else {
+    # Optionally plot states with AQI <= 180 in a different style or omit them
+  }
+}
+
+# Add a legend for states with AQI > 180 only
+legend("topright", inset = 0.05, legend = states_gt_180, col = colors_gt_180, pch = 19, cex = 0.5, bg = 'white', ncol = 2)
+abline(h = 51, col = "black", lty = 2)
+abline(h = 101, col = "black", lty = 2)
+abline(h = 151, col = "black", lty = 2)
+abline(h = 201, col = "black", lty =2 )
+
+cat("States with AQI over 151 are (same info as the legend:",states_gt_180, sep = "\n")
+@
+\subsection{AQI Values for the State of California over three years (2016-2019)}
+
+Description:
+Since in our previous analysis we had identified that California had the highest AQI values, we wanted to further analyze AQI valies for California across three years. Interestingly, we saw a repeating trend in the AQI values over different months. Seemingly, around the middle of the year, the AQI seems to be the worst. According to an online report by IQAir, the summer months of June, July, and August tend to be more polluted than other months, because of drier conditions, less rainfall, higher temperatures, and a higher frequency of wind-blown dust and wildfires fanned by the Santa Ana winds. 
+<<echo=FALSE>>=
+
+# Filter for California
+df_2018_CA <- df[df$State.Name == "California", ]
+
+
+# Define color for California's AQI plot
+color_CA <- "pink"  # Feel free to choose any color that you prefer
+
+
+# Plotting only California's AQI values
+plot(df_2018_CA$Date.Local, df_2018_CA$AQI, type = "n", xlab = "Date", ylab = "AQI",
+     main = "AQI for California in 2018", ylim = c(min(df_2018_CA$AQI), max(df_2018_CA$AQI)))
+
+# Add points for California
+points(df_2018_CA$Date.Local, df_2018_CA$AQI, col = color_CA, pch = 19, cex = 0.6)
+
+abline(h = 51, col = "black", lty = 2, lwd = 1)
+abline(h = 101, col = "blue", lty = 2, lwd = 1)
+abline(h = 151, col = "brown", lty = 2, lwd = 1)
+abline(h = 201, col = "red", lty =2 ,lwd = 1)
+
+text(x = max(df_2018_CA$Date.Local), y = 51, labels = "Good to Moderate (0-100)", pos = 2, cex = 1)
+text(x = max(df_2018_CA$Date.Local), y = 101, labels = "Unhealthy for Sensitive Groups (101-150)", pos = 2, cex = 1)
+text(x = max(df_2018_CA$Date.Local), y = 151, labels = "Unhealthy (151-200)", pos = 2, cex = 1)
+text(x = max(df_2018_CA$Date.Local), y = 201, labels = "Very Unhealthy (>200)", pos = 2, cex = 1)
+
+
+@
+
+
+\subsection{Probability Density Distribution of AQI}
+Description:
+This analysis depicts the probability density representation of AQI values for the year 2018 across all states and counties. The maximum probability is below 50, which suggests that for most places in the United States witness a healthy AQI.  
+
+<<echo=FALSE>>=
+
+
+# Using a numeric value for bandwidth
+custom_bw_density <- density(df_2018$AQI, bw = 2.5, na.rm = TRUE)
+
+
+# Plot the density as a PDF
+plot(custom_bw_density, main="Probability Distribution Function of AQI in 2018 (Unied States)",
+     xlab="AQI", ylab="Density", col="blue")
+
+@
+
+\subsection{Q-Q Plot of Arithmetic Mean}
+
+Description: The following graph demonstrates the distribution type for the arithmetic mean of ozone emissions in the states represented by our data. Since the points on the plot fall in a 45 degree upward pattern, we can assess that the arithmetic mean of ozone follows a normal(Gaussian) distribution.
+
+<<echo = FALSE>>=
+my_data <- read.csv("./data/airquality.csv")
+
+# Take a sample of 5000 values from the "Arithmetic.Mean" column
+sample_data <- sample(my_data$Arithmetic.Mean, 5000)
+
+# Generate QQ plot using the sample data
+qqnorm(sample_data)
+qqline(sample_data)
+@
+
+\subsection{Linear Regression Plot: Arithmetic Mean vs. Air Quality Index}
+
+Description: The following graph is a regression plot that demonstrates the correlation between air quality index and arithmetic mean of ozone emissions. The graph shows a positive correlation between the two; As the air quality index increases, we see that mean ozone levels increase as well. Given that a higher AQI indicates more hazardous air quality, this tells us that ozone emissions may lead to worse air quality. The linear regression line drawn in black agrees with this correlation, and the two blue border lines show that almost all of our data falls within two standard deviations of our regression line.
+
+In addition to demonstrating this correlation, the following graph is also color-coded to show the linear regression by region of the US. These regions were determined using longitudinal data on the location of each county.
+
+For the purposes of this graph,
+Western US is considered any longitudinal value less than or equal to -112
+Central US is considered any longitudinal value greater than -112 and less than -97.6
+Eastern US is considered any longitudinal value greater thn or equal to - 97.6
+
+From this information we can see that air quality and ozone levels for the most part do not vary noticeably by region. However, it is important to note that a large section of the data, specifically data from the Eastern US is concentrated toward the mean AQI of 38.718.
+
+<<echo = FALSE>>=
+counties <- unique(my_data$County.Name)
+
+AQI_by_county <- 1:length(counties)
+mean_by_county <- 1:length(counties)
+long <- 1:length(counties)
+
+for(i in 1: length(counties)){
+  data_sub <- subset(my_data, my_data$County.Name == counties[i])
+  AQI_by_county[i] <- mean(data_sub$AQI)
+  mean_by_county[i] <- mean(data_sub$Arithmetic.Mean)
+  if(mean(data_sub$Longitude) <= -112) long[i] <-  1
+  if(mean(data_sub$Longitude) > -112 & mean(data_sub$Longitude) < -97.6) long[i] <- 2
+  if(mean(data_sub$Longitude) >= -97.6) long[i] <- 3
+}
+
+plot(AQI_by_county, mean_by_county,
+     xlab = "AQI",
+     ylab = "Arithmetic Mean",
+     main = "Regression of mean AQI & Arithmetic Mean per county (Regional Analysis)",
+     xlim = c(25, 60),
+     ylim = c(0.02, 0.05),
+     pch = 20,
+     col = ifelse(long == 1, "aquamarine3", ifelse(long == 2, "blue4", "coral3")))
+
+legend(25, 0.049, legend = c("Western US", "Central US", "Eastern US"), fill = c("aquamarine3","blue4", "coral2"), border = "black", text.font = 7)
+
+lin_reg_mod <- lm(mean_by_county ~ AQI_by_county)
+
+abline(lin_reg_mod, col = "black")
+
+s_d <- sd(abs(lin_reg_mod$residuals))*2
+
+abline(lin_reg_mod$coefficients[1]+2*s_d,lin_reg_mod$coefficients[2], col = "blue", lty = 2)
+abline(lin_reg_mod$coefficients[1]-2*s_d,lin_reg_mod$coefficients[2], col = "blue", lty = 2)
+
+abline(v = mean(AQI_by_county), col = "brown4")
+text(41.5, 0.047, "Mean AQI", vfont = c("serif", "bold"))
+@
+\subsection{Violin Plot for the Arithmetic Mean}
+
+A violin plot combines features of a box plot and a kernel density plot, ideal for visualizing data distributions across groups like state emissions. Each state corresponds to a group, with the plot's width indicating data density. Wider sections imply higher density, narrower sections lower density. The plot's shape reflects the kernel density plot around the central axis. Upon inspection, we observe narrow sections in each state, indicating varied emission levels. Notably, the tails of the plot show values nearing 0.1, suggesting outliers. Puerto Rico's data shows wider density around 0, requiring further investigation.
+
+<<echo = FALSE>>=
+library(ggplot2)
+theme_set(theme_bw())
+
+# plot
+g <- ggplot(my_data, aes(Arithmetic.Mean, State.Name))
+g + geom_violin() + 
+  labs(title="Violin plot", 
+       subtitle="Arithmetic Mean (By State)",
+       caption="Source: airquality",
+       x="Arithmetic",
+       y="State")
+
+@
+\subsection{Seasonal Plot: Average Arithmetic Mean by Month}
+
+We analyze seasonal data to discern patterns within California's emissions. To facilitate this, we aggregated daily emission data into monthly averages across three consecutive years: 2016, 2017, and 2018. Our visualization reveals consistent trends within California, with notably elevated values exceeding 0.035 observed in March, April, May, June, and July. Of these, April exhibits the highest peak, exceeding 0.04 in ozone emissions. This seasonal pattern prompts further investigation to determine if similar trends extend beyond California and to explore potential correlations with other variables.
+
+<<echo = FALSE>>=
+
+my_data$Date.Local <- as.Date(my_data$Date.Local, format = "%m/%d/%y")
+
+# Extract month from Date.Local
+my_data$Month <- format(my_data$Date.Local, "%Y-%m")
+
+# Create an empty list to store monthly averages
+monthly_average <- list()
+
+# Loop through unique months and calculate mean of Arithmetic.Mean
+unique_months <- unique(my_data$Month)
+for (month in unique_months) {
+  monthly_data <- my_data[my_data$Month == month, ]
+  monthly_average[[month]] <- mean(monthly_data$Arithmetic.Mean, na.rm = TRUE)
+}
+
+
+# Convert list to dataframe
+monthly_average_df <- data.frame(Month = substring(names(monthly_average), 6), 
+                                 Year = substring(names(monthly_average), 1, 4),
+                                 Monthly_Arithmetic_Mean = unlist(monthly_average))
+
+library(ggplot2)
+
+# Filter data for each year
+data_2016 <- monthly_average_df[monthly_average_df$Year == "2016", ]
+data_2017 <- monthly_average_df[monthly_average_df$Year == "2017", ]
+data_2018 <- monthly_average_df[monthly_average_df$Year == "2018", ]
+
+# Plot
+ggplot() +
+  geom_point(data = data_2016, aes(x = Month, y = Monthly_Arithmetic_Mean, color = "2016"), size = 3) +
+  geom_point(data = data_2017, aes(x = Month, y = Monthly_Arithmetic_Mean, color = "2017"), size = 3) +
+  geom_point(data = data_2018, aes(x = Month, y = Monthly_Arithmetic_Mean, color = "2018"), size = 3) +
+  labs(title = "Seasonal Plot: Average Arithmetic Mean by Month (for California)",
+       x = "Month",
+       y = "Average Arithmetic Mean",
+       color = "Year",
+       caption = "Source: Monthly average data") +
+  scale_color_manual(values = c("2016" = "blue", "2017" = "red", "2018" = "green")) +
+  theme_minimal()
+
+@
+
+\section{Bubble Chart: Mean Ozone Emissions Per County in Northern California}
+
+The following bubble chart is a visualization of mean ozone emissions by county in Northern California between the years of 2016 and 2019. As you can see in the plot, there is a clear pattern with ozone emissions peaking every year during the summer months, then dropping back down during the rest of the year. This is apparent in all counties represented from Northern California. Another important factor this plot presents is the correlation between arithmetic mean of ozone and AQI. Here it is visualized through the size of each point. This correlation has been represented in previous plots within this report, but is emphasized again within this one, allowing us to see how the distribution shifts throughout the year.
+
+<<echo=FALSE>>=
+emissions <- read.csv("./data/airquality.csv")
+emissions2 <- emissions
+
+emissions2$Date.Local <- as.Date(emissions2$Date.Local, format="%m/%d/%y")
+
+emissions2_cali <- emissions2[emissions2$State.Name == "California", ]
+emissions_cali <- emissions2_cali[emissions2$Latitude > 35, ]
+
+library(ggplot2)
+
+states <- unique(emissions_cali$State.Name)
+counties <- unique(emissions_cali$County.Name)
+emissions_select <- emissions_cali[emissions_cali$State.Name %in% states, ]
+
+theme_set(theme_bw())
+
+g <- ggplot(emissions_select, aes(Date.Local, Arithmetic.Mean)) + 
+  labs(title="Ozone Emissions Per County in Northern California", x = "Date(year)", y = "Arithmetic Mean(ppm)")
+  
+g + geom_jitter(aes(col = County.Name, size = AQI))
+@
+\section{Lollipop Chart: Mean Ozone Emissions By State}
+
+The following lollipop chart allows us to take a look at how ozone emissions differ between each state represented in our data. Almost all of the mean ozone emissions for each state fall within 0.02 and 0.04 ppm. However, this plot shows us that Puerto Rico is an outlier when it comes to mean ozone emissions. The arithmetic mean for Puerto Rico doesn't even reach 0.01. This leads us to wonder why ozone emissions in Puerto Rico are so much smaller than the rest of the states represented. Is this due to an inconsistency in data reporting or is Puerto Rico doing something to keep ozone emissions down that the rest of the states are not? This is certainly something to analyze more deeply as we move forward.
+
+<<echo = FALSE>>=
+library(ggplot2)
+theme_set(theme_bw())
+
+states <- unique(emissions$State.Name)
+
+mean_by_state <- 1:length(states)
+
+for(i in 1: length(states)){
+  data_sub <- subset(my_data, my_data$State.Name == states[i])
+  mean_by_state[i] <- mean(data_sub$Arithmetic.Mean)
+}
+mean_ozone <- data.frame(mean_by_state,
+                         states)
+
+ggplot(mean_ozone, aes(x=states, y=mean_by_state)) + 
+  geom_point(size=3) + 
+  geom_segment(aes(x=states, 
+                   xend=states, 
+                   y=0, 
+                   yend=mean_by_state)) + 
+  labs(title="Mean Ozone Emissions By State", 
+       x = "States", y = "Arithmetic Mean(ppm)") + 
+  theme(axis.text.x = element_text(angle=65, vjust =1, hjust =1.1))
+@
+
+\subsection{Correlation of Numeric Variables}
+
+In this analysis, we wanted to explore the relationships between variables in our dataset, particularly focusing on their correlation patterns. To achieve this, we utilized a correlogram, a graphical representation that provides insights into the strength and direction of correlations between variables. The correlogram allows us to visually identify patterns and dependencies within the data, aiding in the understanding of the underlying relationships between different variables.
+From our analysis, it is apparent that variables Arithmetic Mean (ozone emissions) and AQI, 1st max value of ozone emissions during the day and arithmetic mean, as well as 1st max value of ozone emissions during the day and AQI have the highest correlation. For example, counties with high AQIs also have higher 1st maximum value reported. 
+
+
+<<echo = FALSE>>=
+
+#install.packages("devtools")
+
+library(rnaturalearth)
+library(sf)
+library(ggplot2)
+#install.packages("patchwork")
+
+#install.packages("corrplot")
+library(corrplot)
+
+# Assuming you want to keep columns named "State", "AQI", and "Arithmetic.Mean"
+selected_data <- my_data[c( "AQI", "Arithmetic.Mean","Observation.Count", "Latitude","Longitude","Method.Code","X1st.Max.Value","X1st.Max.Hour","County.Code")]
+# Calculate correlation matrix for numeric data
+corr_matrix <- cor(selected_data, use = "complete.obs")
+
+corrplot(corr_matrix, method = "circle", type = "upper",
+         order = "hclust", tl.col = "black", tl.srt = 45,
+         addCoef.col = "black", 
+         tl.cex = 0.5)
+title(main = "Correlogram of Variables (All counties)", 
+      col.main = "black", 
+      cex.main = 0.8, # Adjust this value to change the size of the title text
+      line = -1)
+
+my_data$X1st.Max.Hour <- factor(my_data$X1st.Max.Hour)
+@
+\subsection{Faceted Plot: Distribution of X1st.Max.Hour by County}
+
+In this analysis, we aimed to visualize the distribution of the variable X1st.Max (hour of the day during which the maximum value of ozone emission is observed or recorded for a given location) Hour across different counties in our dataset. To accomplish this, we created a faceted plot using ggplot2 in R. Each facet represents a different county, allowing us to compare the distributions of X1st.Max.Hour across counties. For all states, most counties had first maximum hour in the morning.
+
+<<echo = FALSE>>=
+# Create a faceted plot
+ggplot(my_data, aes(x = X1st.Max.Hour)) +
+  geom_bar() +  # Use geom_bar for a bar plot
+  facet_wrap(~ State.Name) +  # Facet by 'County'
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size=4)) +  # Rotate x-axis labels for better readability
+  labs(title = "Distribution of X1st.Max.Hour by County, Categorized by State", x = "X1st.Max.Hour", y = "Frequency")
+@
+
+\begin{thebibliography}{1} 
+
+\bibitem{airnow} AirNow: \textbf{What is the AQI?} [Online]. Available: \url{https://www.airnow.gov/education/students/what-is-the-aqi/}
+\bibitem{epa-aqs} U.S. Environmental Protection Agency: \textbf{Air Quality System (AQS) Data Mart}. [Online]. Available: \url{https://aqs.epa.gov/aqsweb/airdata/download_files.html#Annual}
+\bibitem{epa-aqs} U.S. Environmental Protection Agency: \textbf{Ozone Emissions Data Mart}. [Online]. Available: \url{https://aqs.epa.gov/aqsweb/airdata/download_files.html#Annual}
+
+\end{thebibliography}
+
+\end{document}

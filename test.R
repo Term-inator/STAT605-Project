@@ -1,6 +1,6 @@
 library(ggplot2)
 
-my_data <- read.csv("airquality.csv")
+my_data <- read.csv("./data/airquality.csv")
 
 calculate_AQI_O3_8hour <- function(c) {
   Linear <- function(Ih, Il, Ch, Cl, C) {
