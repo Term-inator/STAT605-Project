@@ -2,13 +2,19 @@
 \usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
 \usepackage{amsmath}
 \usepackage{hyperref}
-\usepackage{Sweave}
+%\usepackage{Sweave}
 \begin{document}
 \title{Project Draft2: Air Quality Analysis}
 
 \author{Valerie Heckel, Lavanya Saxena, Jacqueline Cabrera, Theodore Gerasimov, Sicong Chen}
 \maketitle % this is for bringing the title, author and date  
 \tableofcontents
+
+<<echo=FALSE>>=
+Sys.setenv(LANGUAGE = "en")
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
+my_data <- read.csv("data/airquality.csv")
+@
 
 \section{Description of the project}
 Description:
@@ -93,11 +99,6 @@ In the upcoming graphs, our focus lies in examining the relationship between air
 
 <<echo=FALSE>>=
 library(maps)
-
-# Read the CSV file
-my_data <- read.csv("/Users/lavanyasaxena/Downloads/daily_44201_2016-final.csv")
-
-# Take a sample of 1000 points from your data
 sample_data <- my_data[sample(nrow(my_data), 1000), ]
 
 # Define colors for the markers
@@ -111,6 +112,7 @@ max_mean <- max(sample_data$Arithmetic.Mean)
 rounded_mean <- round(sample_data$Arithmetic.Mean, 3)
 color_index <- cut(rounded_mean, breaks = 10, labels = FALSE)
 
+par(mar = c(2, 1, 2, 1))
 # Plot the map of the US
 map("state", col = "gray", fill = TRUE, lwd = 0.5, ylim = c(24, 50), xlim = c(-125, -66))
 
@@ -121,10 +123,52 @@ points(sample_data$Longitude, sample_data$Latitude, pch = 19, col = colors[color
 legend_values <- round(seq(min_mean, max_mean, length.out = 10), 2)
 
 # Create the legend plot
-par(mar = c(5, 0, 2, 0))  # Adjust margins for the legend plot
-plot.new()
-legend("center", legend = legend_values, 
-       fill = colors, title = "Arithmetic Mean (United States)", cex = 0.5, horiz = TRUE, inset = c(0, 0, -0.2, 0))
+par(mar = c(1, 0, 3, 1))  # Adjust margins for the legend plot
+legend("bottom", legend = legend_values, 
+       fill = colors, title = "Arithmetic Mean (United States)", cex = 0.5, horiz = TRUE)
+
+# # Read the CSV file
+# 
+# # Take a sample of 1000 points from your data
+# sample_data <- my_data[sample(nrow(my_data), 1000), ]
+# 
+# # Define colors for the markers
+# colors <- colorRampPalette(c("blue", "yellow", "red"))(10)
+# 
+# # Define the range of values in the "Arithmetic.Mean" column
+# min_mean <- min(sample_data$Arithmetic.Mean)
+# max_mean <- max(sample_data$Arithmetic.Mean)
+# 
+# # Assign color index based on the values of "Arithmetic.Mean"
+# rounded_mean <- round(sample_data$Arithmetic.Mean, 3)
+# color_index <- cut(rounded_mean, breaks = 10, labels = FALSE)
+# 
+# par(mar = c(5, 4, 4, 2))
+# 
+# plot.new()
+# # Plot the map of the US
+# map("state", col = "gray", fill = TRUE, lwd = 0.5, ylim = c(24, 50), xlim = c(-125, -66))
+# 
+# # Plot points on the map with colors based on "Arithmetic.Mean"
+# points(sample_data$Longitude, sample_data$Latitude, pch = 19, col = colors[color_index], cex = 0.5)
+# 
+# # Round the numbers in the legend
+# legend_values <- round(seq(min_mean, max_mean, length.out = 10), 2)
+# 
+# # Create the legend plot
+# # par(mar = c(5, 0, 2, 0) + 0.1)  # Adjust margins for the legend plot
+# 
+# # par(xpd=NA)
+# legend(x = "bottom", inset = c(0, -0.3), legend = legend_values, 
+#        fill = colors, title = "Arithmetic Mean (United States)", cex = 0.5, horiz = TRUE)
+# # legend("bottom", inset = c(0, -1), legend = legend_values, 
+# #       fill = colors, title = "Arithmetic Mean (United States)", cex = 0.5, horiz = #TRUE)
+# 
+# # plot.new()
+# # legend("center", legend = legend_values, 
+# #        fill = colors, title = "Arithmetic Mean (United States)", cex = 0.5, horiz = TRUE, inset = c(0, 0, -0.2, 0))
+
+
 
 @
 
@@ -140,9 +184,6 @@ In the United States, ozone levels between 0.02 and 0.04 display a relatively hi
 Both histograms exhibit tails within the range of values from 0.04 to 0.06, suggesting occasional higher ozone levels. This indicates a significant impact of California State on the overall ozone level distribution in the country. 
 
 <<echo=FALSE>>=
-
-my_data <- read.csv("/Users/lavanyasaxena/Downloads/daily_44201_2016-final.csv")  
-
 par(mfrow = c(1, 2))
 par(mar = c(5, 5, 2, 2))
 
@@ -180,17 +221,18 @@ This two box plot represent the value of the Ozone Emission of the Country in co
 par(mfrow = c(1, 2))  # Set up a 1x2 grid for plotting
 # Plot boxplot for the Arithmetic.Mean column
 boxplot(my_data$Arithmetic.Mean,
-        main = "Boxplot of Arithmetic Mean (United States)",
+        main = "Boxplot of Arithmetic Mean (US)",
         ylab = "Value")
 # Add label for the median of Arithmetic Mean
-text(1, median(my_data$Arithmetic.Mean), paste("Median:", round(median(my_data$Arithmetic.Mean), 2)), pos = 3, cex = 0.8)
+text(1, median(my_data$Arithmetic.Mean), paste("Median:", round(median(my_data$Arithmetic.Mean), 2)), pos = 3, cex = 0.6)
 
 # Plot boxplot for the AQI column
 boxplot(my_data$AQI,
-        main = "Boxplot of AQI (United States)",
+        main = "Boxplot of AQI (US)",
         ylab = "Value")
 # Add label for the median of AQI
-text(1, median(my_data$AQI), paste("Median:", round(median(my_data$AQI), 2)), pos = 3, cex = 0.9)
+text(1, median(my_data$AQI), paste("Median:", round(median(my_data$AQI), 2)), pos = 3, cex = 0.6)
+
 @
 
 \subsection{Scatter Plot Analysis: States with AQI Greater Than 50}
@@ -206,8 +248,6 @@ In this analysis, we wanted to plot the AQI values for each state over the year 
 
 
 <<echo=FALSE>>=
-
-my_data <- read.csv("/Users/lavanyasaxena/Downloads/daily_44201_2016-final.csv")  
 df <- my_data
 df$Date.Local <- as.Date(df$Date.Local, format="%m/%d/%y")
 
@@ -253,21 +293,30 @@ cat("States with AQI over 151 are (same info as the legend:",states_gt_180, sep 
 Description:
 Since in our previous analysis we had identified that California had the highest AQI values, we wanted to further analyze AQI valies for California across three years. Interestingly, we saw a repeating trend in the AQI values over different months. Seemingly, around the middle of the year, the AQI seems to be the worst. According to an online report by IQAir, the summer months of June, July, and August tend to be more polluted than other months, because of drier conditions, less rainfall, higher temperatures, and a higher frequency of wind-blown dust and wildfires fanned by the Santa Ana winds. 
 <<echo=FALSE>>=
-
 # Filter for California
 df_2018_CA <- df[df$State.Name == "California", ]
 
-
+plot.new()
 # Define color for California's AQI plot
-color_CA <- "pink"  # Feel free to choose any color that you prefer
+# color_CA <- "pink"  # Feel free to choose any color that you prefer
 
+# Load the colorspace package
+# library(colorspace)
+# 
+# green_to_orange <- sequential_hcl(4, h = c(120, 40), c = 100, l = c(70, 90))
+# start_color <- "darkgreen" # Starting color
+# end_color <- "red" # A version of light red
+# 
+# color_ramp <- colorRampPalette(c(start_color, end_color))
+# 
+# green_to_orange <- color_ramp(4)
 
 # Plotting only California's AQI values
 plot(df_2018_CA$Date.Local, df_2018_CA$AQI, type = "n", xlab = "Date", ylab = "AQI",
      main = "AQI for California in 2018", ylim = c(min(df_2018_CA$AQI), max(df_2018_CA$AQI)))
 
 # Add points for California
-points(df_2018_CA$Date.Local, df_2018_CA$AQI, col = color_CA, pch = 19, cex = 0.6)
+points(df_2018_CA$Date.Local, df_2018_CA$AQI, col = ifelse(df_2018_CA$AQI >= 0 & df_2018_CA$AQI <= 100, "green", ifelse(df_2018_CA$AQI >= 101 & df_2018_CA$AQI <= 150, "yellow", ifelse(df_2018_CA$AQI >= 151 & df_2018_CA$AQI <= 200, 'red', 'brown'))), pch = 16, cex = 0.6)
 
 abline(h = 51, col = "black", lty = 2, lwd = 1)
 abline(h = 101, col = "blue", lty = 2, lwd = 1)
@@ -275,7 +324,7 @@ abline(h = 151, col = "brown", lty = 2, lwd = 1)
 abline(h = 201, col = "red", lty =2 ,lwd = 1)
 
 text(x = max(df_2018_CA$Date.Local), y = 51, labels = "Good to Moderate (0-100)", pos = 2, cex = 1)
-text(x = max(df_2018_CA$Date.Local), y = 101, labels = "Unhealthy for Sensitive Groups (101-150)", pos = 2, cex = 1)
+text(x = max(df_2018_CA$Date.Local), y = 101, labels = "Unhealthy for Sensitive Groups (101-150)", pos = 2,  cex = 1)
 text(x = max(df_2018_CA$Date.Local), y = 151, labels = "Unhealthy (151-200)", pos = 2, cex = 1)
 text(x = max(df_2018_CA$Date.Local), y = 201, labels = "Very Unhealthy (>200)", pos = 2, cex = 1)
 
@@ -288,15 +337,37 @@ Description:
 This analysis depicts the probability density representation of AQI values for the year 2018 across all states and counties. The maximum probability is below 50, which suggests that for most places in the United States witness a healthy AQI.  
 
 <<echo=FALSE>>=
-
+library(dplyr)
+library(ggplot2)
 
 # Using a numeric value for bandwidth
-custom_bw_density <- density(df_2018$AQI, bw = 2.5, na.rm = TRUE)
-
+#custom_bw_density <- density(df_2018$AQI, bw = 2.5, na.rm = TRUE)
 
 # Plot the density as a PDF
-plot(custom_bw_density, main="Probability Distribution Function of AQI in 2018 (Unied States)",
-     xlab="AQI", ylab="Density", col="blue")
+#plot(custom_bw_density, main="Probability Distribution Function of AQI in 2018 (Unied States)",
+#     xlab="AQI", ylab="Density", col="blue")
+
+df_CA <- my_data[my_data$State.Name == "California", ]
+df_CA$Date.Local <- as.Date(df_CA$Date.Local, format="%d/%m/%Y")
+df_CA$year <- format(df_CA$Date.Local, "%Y")
+df_CA <- df_CA %>% filter(!is.na(year))
+df_CA$year <- paste0("20", substr(format(df_CA$Date.Local, "%Y"), 3, 4))
+
+df_CA_yearly_means <-
+df_CA %>% 
+group_by(year) %>% 
+summarize(mean_AQI = mean(AQI, na.rm = TRUE))
+
+
+ggplot(data = df_CA, aes(x = AQI, fill = year)) +
+  geom_density(alpha = 0.3) +
+  geom_vline(data = df_CA_yearly_means, aes(xintercept = mean_AQI, color = year), linetype = "dashed") +
+  labs(title = "Density of AQI in California by year",
+       x = "AQI",
+       y = "Density",
+       fill = "Year",
+       color = "Mean AQI") +
+  theme(plot.title = element_text(hjust = 0.5, size = 12))
 
 @
 
@@ -305,8 +376,6 @@ plot(custom_bw_density, main="Probability Distribution Function of AQI in 2018 (
 Description: The following graph demonstrates the distribution type for the arithmetic mean of ozone emissions in the states represented by our data. Since the points on the plot fall in a 45 degree upward pattern, we can assess that the arithmetic mean of ozone follows a normal(Gaussian) distribution.
 
 <<echo = FALSE>>=
-my_data <- read.csv("/Users/lavanyasaxena/Downloads/daily_44201_2016-final.csv")
-
 # Take a sample of 5000 values from the "Arithmetic.Mean" column
 sample_data <- sample(my_data$Arithmetic.Mean, 5000)
 
@@ -439,7 +508,7 @@ ggplot() +
 The following bubble chart is a visualization of mean ozone emissions by county in Northern California between the years of 2016 and 2019. As you can see in the plot, there is a clear pattern with ozone emissions peaking every year during the summer months, then dropping back down during the rest of the year. This is apparent in all counties represented from Northern California. Another important factor this plot presents is the correlation between arithmetic mean of ozone and AQI. Here it is visualized through the size of each point. This correlation has been represented in previous plots within this report, but is emphasized again within this one, allowing us to see how the distribution shifts throughout the year.
 
 <<echo=FALSE>>=
-emissions <- read.csv("/Users/lavanyasaxena/Downloads/daily_44201_2016-final.csv")
+emissions <- my_data 
 emissions2 <- emissions
 
 emissions2$Date.Local <- as.Date(emissions2$Date.Local, format="%m/%d/%y")
@@ -455,8 +524,20 @@ emissions_select <- emissions_cali[emissions_cali$State.Name %in% states, ]
 
 theme_set(theme_bw())
 
+# g <- ggplot(emissions_select, aes(Date.Local, Arithmetic.Mean)) + 
+#   labs(title="Ozone Emissions Per County in Northern California", x = "Date(year)", y = "Arithmetic Mean(ppm)") +
+#   theme(legend.position = c(1.05, 0.5))
+#   
+# g + geom_jitter(aes(col = County.Name, size = AQI))
+
+
 g <- ggplot(emissions_select, aes(Date.Local, Arithmetic.Mean)) + 
-  labs(title="Ozone Emissions Per County in Northern California", x = "Date(year)", y = "Arithmetic Mean(ppm)")
+  labs(title="Ozone Emissions Per County in Northern California", 
+       x = "Date(year)", 
+       y = "Arithmetic Mean(ppm)",
+       color = "County",
+       size = "AQI Value") +
+  theme(plot.title = element_text(hjust = 0.5, size = 10))
   
 g + geom_jitter(aes(col = County.Name, size = AQI))
 @
